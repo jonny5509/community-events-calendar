@@ -1,3 +1,6 @@
 {
-  "name": "Community Events Calendar"
+  "name": "Community Events Calendar",
+  "render_readme": true,
+  "zip_release": true,
+  "filename": "community-events-calendar.zip"
 }
