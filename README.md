@@ -2,6 +2,8 @@
 
 [![Downloads](https://img.shields.io/github/downloads/jonny5509/community-events-calendar/total?label=downloads)](https://github.com/jonny5509/community-events-calendar/releases)
 
+[![Version](https://img.shields.io/github/v/release/jonny5509/community-events-calendar?display_name=tag&sort=semver)](https://github.com/jonny5509/community-events-calendar/releases/latest)
+
 A custom [Home Assistant](https://www.home-assistant.io/) integration for discovering public community events and displaying them in focused calendars and sensors.
 
 > **Please verify listings with the organiser.** Event discovery is best-effort: dates, availability, age restrictions, access requirements, and venue details may be incomplete or change.
