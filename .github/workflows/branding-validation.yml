@@ -1,0 +1,58 @@
+name: Integration metadata and branding
+
+on:
+  push:
+    branches: [main, "release/**", "fix/**", "chore/**"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  metadata:
+    name: Check integration metadata and brand icon
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Validate manifest and brand assets
+        run: |
+          python - <<'PY'
+          import json
+          import struct
+          from pathlib import Path
+
+          root = Path("custom_components/chastity_calendar")
+          manifest_path = root / "manifest.json"
+          manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+
+          assert manifest.get("domain") == "chastity_calendar", (
+              "manifest domain must match the custom_components directory"
+          )
+          assert manifest.get("name") == "Community Events Calendar"
+          assert manifest.get("config_flow") is True
+          assert manifest.get("version"), "manifest version is required"
+
+          icon = root / "brand" / "icon.png"
+          assert icon.is_file(), f"Missing required brand icon: {icon}"
+          data = icon.read_bytes()
+          assert data[:8] == b"\\x89PNG\\r\\n\\x1a\\n", "Brand icon must be a PNG"
+          width, height = struct.unpack(">II", data[16:24])
+          assert width == height == 256, (
+              f"Brand icon must be 256x256; found {width}x{height}"
+          )
+
+          # logo.png is optional: Home Assistant falls back to icon.png.
+          logo = root / "brand" / "logo.png"
+          if logo.exists():
+              logo_data = logo.read_bytes()
+              assert logo_data[:8] == b"\\x89PNG\\r\\n\\x1a\\n", (
+                  "Brand logo must be a PNG"
+              )
+              logo_width, logo_height = struct.unpack(">II", logo_data[16:24])
+              assert logo_width >= 128 and logo_height >= 128, (
+                  "Brand logo shortest side must be at least 128px"
+              )
+
+          print("Integration metadata and branding checks passed.")
+          PY
